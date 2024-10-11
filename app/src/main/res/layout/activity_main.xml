@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="@android:color/white">
+
+    <!-- App Title -->
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vacation Planner"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="32dp"
+        android:textAlignment="center" />
+
+    <!-- Button to navigate to VacationActivity -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonToVacation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Plan a Vacation"
+        android:textSize="18sp"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/ic_vacation_plan"
+        app:iconPadding="16dp"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Button to navigate to VacationList -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonToVacationList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View Vacations"
+        android:textSize="18sp"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/ic_view_list"
+        app:iconPadding="16dp"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/colorPrimaryDark" />
+
+</LinearLayout>

@@ -1,0 +1,32 @@
+<resources>
+
+    <string name="app_name">JackD308</string>
+
+    <string name="select_to_flight">Select your flight destination</string>
+    <string name="select_from_flight">Select your flight origin</string>
+
+    <string name="save_vacation">Save Vacation Details</string>
+
+    <!-- Vacation Page Labels and Hints -->
+    <string name="vacation_name">Vacation Name</string>
+    <string name="hint_vacation_name">Enter vacation name</string>
+
+    <string name="to_flight">To Flight</string>
+    <string name="from_flight">From Flight</string>
+
+    <string name="select_hotel">Select Hotel</string>
+
+    <string name="departure_date">Departure Date</string>
+    <string name="hint_departure_date">Select departure date</string>
+
+    <string name="return_date">Return Date</string>
+    <string name="hint_return_date">Select return date</string>
+
+    <string name="adults">Number of Adults</string>
+    <string name="hint_adults">Enter number of adults</string>
+
+    <string name="kids">Number of Kids</string>
+    <string name="hint_kids">Enter number of kids</string>
+
+    <string name="add_vacation">Add Vacation</string>
+</resources>

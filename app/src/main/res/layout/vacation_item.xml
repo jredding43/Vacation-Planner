@@ -1,0 +1,67 @@
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:elevation="4dp"
+    app:cardBackgroundColor="@color/colorCardBackground"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Vacation Name -->
+        <TextView
+            android:id="@+id/text_view_vacation_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vacation Name"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Vacation Dates -->
+        <TextView
+            android:id="@+id/text_view_vacation_dates"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vacation Dates"
+            android:textSize="16sp"
+            android:textColor="@color/colorTextSecondary"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Divider for better separation -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorDivider"
+            android:layout_marginVertical="8dp" />
+
+        <!-- Excursions -->
+        <TextView
+            android:id="@+id/text_view_excursions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Excursions"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_marginTop="8dp" />
+
+        <!-- List of Excursions -->
+        <TextView
+            android:id="@+id/text_view_excursion_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No excursions selected"
+            android:textSize="14sp"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

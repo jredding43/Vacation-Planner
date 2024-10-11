@@ -1,0 +1,14 @@
+<resources>
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorAccent">#1976D2</color>
+    <color name="colorBackground">#F5F5F5</color> <!-- A light background -->
+    <color name="colorTextPrimary">#212121</color> <!-- Black for main text -->
+    <color name="colorTextSecondary">#000000</color> <!-- Dark gray for secondary text -->
+    <color name="colorCardBackground">#FFFFFF</color> <!-- White card background -->
+    <color name="colorDivider">#BDBDBD</color>
+    <color name="colorLightGray">#D3D3D3</color>
+    <color name="White">#FFFFFF</color>
+    <color name="colorDarkGray">#757575</color>
+    <color name="colorRed">#FF0000</color>
+</resources>
