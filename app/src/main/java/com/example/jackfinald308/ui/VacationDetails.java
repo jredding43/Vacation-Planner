@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.jackfinald308.R;
 import com.example.jackfinald308.entities.Vacation;
+import com.example.jackfinald308.notifications.NotificationHelper;
 import com.example.jackfinald308.viewmodel.VacationViewModel;
 
 import java.text.ParseException;
@@ -175,6 +176,35 @@ public class VacationDetails extends AppCompatActivity {
             // Save to the database
             vacationViewModel.update(vacation);
             Toast.makeText(this, "Vacation details saved!", Toast.LENGTH_SHORT).show();
+
+            // Schedule an alarm for the vacation start date
+            scheduleVacationStartAlarm(vacation);
+
+            // Navigate back to the MainActivity
+            Intent intent = new Intent(VacationDetails.this, MainActivity.class);
+            startActivity(intent);
+            finish();  // Close the current activity
         }
     }
+
+
+    // Method to schedule the alarm for vacation start date
+    private void scheduleVacationStartAlarm(Vacation vacation) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        Calendar startDate = Calendar.getInstance();
+
+        try {
+            startDate.setTime(sdf.parse(vacation.getDepartDate()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return;  // Exit if the date cannot be parsed
+        }
+
+        long timeInMillis = startDate.getTimeInMillis();
+        String startMessage = "Your vacation " + vacation.getVacationName() + " is starting today!";
+
+        // Schedule the alarm using NotificationHelper or AlarmManager
+        NotificationHelper.scheduleNotification(this, "Vacation Start Alert", startMessage, timeInMillis);
+    }
+
 }

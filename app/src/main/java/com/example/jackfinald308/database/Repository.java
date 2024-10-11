@@ -30,69 +30,98 @@ public class Repository {
         mExcursionDAO = db.excursionDAO();
     }
 
+    // Observes if a vacation has associated excursions
     public LiveData<Boolean> hasAssociatedExcursions(int vacationId) {
         return Transformations.map(mExcursionDAO.getExcursionsByVacationId(vacationId), excursions ->
                 excursions != null && !excursions.isEmpty());
     }
 
+    // Fetches excursions by vacation ID
     public LiveData<List<Excursion>> getExcursionsByVacationId(int vacationId) {
         return mExcursionDAO.getExcursionsByVacationId(vacationId);
     }
 
-    public void deleteVacation(int vacationId) {
-        LiveData<Boolean> hasExcursions = hasAssociatedExcursions(vacationId);
-        if (hasExcursions.getValue() != null && hasExcursions.getValue()) {
-            // Notify user that the vacation cannot be deleted
-        } else {
-            databaseExecutor.execute(() -> mVacationDAO.deleteById(vacationId));
-        }
+    // Deletes a vacation (checks for associated excursions before deleting)
+    public void deleteVacation(int vacationId, VacationDeleteCallback callback) {
+        // Observe LiveData on the main thread, and once observed, delete vacation on background thread
+        new Handler(Looper.getMainLooper()).post(() -> {
+            hasAssociatedExcursions(vacationId).observeForever(hasExcursions -> {
+                if (hasExcursions) {
+                    // Vacation has excursions, cannot delete
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        callback.onVacationHasExcursions(vacationId);  // Ensure callback runs on the main thread
+                    });
+                } else {
+                    // Delete vacation in the background
+                    databaseExecutor.execute(() -> {
+                        mVacationDAO.deleteById(vacationId);
+
+                        // Ensure that the success callback is posted back to the main thread
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            callback.onVacationDeleteSuccess();  // Callback on the main thread
+                        });
+                    });
+                }
+            });
+        });
     }
 
 
-    public void insert(Excursion excursion) {
-        databaseExecutor.execute(() -> mExcursionDAO.insert(excursion));
+    // Deletes all excursions associated with a vacation
+    public void deleteExcursionsByVacationId(int vacationId) {
+        databaseExecutor.execute(() -> mExcursionDAO.deleteExcursionsByVacationId(vacationId));
     }
 
-    public void update(Excursion excursion) {
-        databaseExecutor.execute(() -> mExcursionDAO.update(excursion));
+    // Deletes a vacation by its ID
+    public void deleteVacationById(int vacationId) {
+        databaseExecutor.execute(() -> mVacationDAO.deleteById(vacationId));
     }
 
-    public void delete(Excursion excursion) {
-        databaseExecutor.execute(() -> mExcursionDAO.delete(excursion));
-    }
-
-    public LiveData<List<Vacation>> getAllVacations() {
-        return mVacationDAO.getAllVacation();
-    }
-
+    // Inserts a new vacation
     public void insert(Vacation vacation) {
         databaseExecutor.execute(() -> mVacationDAO.insert(vacation));
     }
 
+    // Updates a vacation
     public void update(Vacation vacation) {
         databaseExecutor.execute(() -> mVacationDAO.update(vacation));
     }
 
+    // Retrieves all vacations
+    public LiveData<List<Vacation>> getAllVacations() {
+        return mVacationDAO.getAllVacation();
+    }
+
+    // Retrieves a vacation by its ID
     public LiveData<Vacation> getVacationById(int vacationId) {
         return mVacationDAO.getVacationById(vacationId);
     }
 
-    public void deleteExcursionsByVacationId(int vacationId) {
-        databaseExecutor.execute(() -> {
-            mExcursionDAO.deleteExcursionsByVacationId(vacationId);
-        });
+    // Inserts a new excursion
+    public void insert(Excursion excursion) {
+        databaseExecutor.execute(() -> mExcursionDAO.insert(excursion));
     }
 
+    // Updates an excursion
+    public void update(Excursion excursion) {
+        databaseExecutor.execute(() -> mExcursionDAO.update(excursion));
+    }
+
+    // Deletes an excursion
+    public void delete(Excursion excursion) {
+        databaseExecutor.execute(() -> mExcursionDAO.delete(excursion));
+    }
+
+    // Retrieves all excursions
     public LiveData<List<Excursion>> getAllExcursions() {
         return mExcursionDAO.getAllExcursions();
     }
 
+    // Populates the database with sample excursions if none exist
     public void populateExcursions(int vacationId) {
         databaseExecutor.execute(() -> {
-            // Fetch existing excursions synchronously
             List<Excursion> existingExcursions = mExcursionDAO.getExcursionsByVacationIdSync(vacationId);
 
-            // Check if the list is not null and is empty
             if (existingExcursions != null && existingExcursions.isEmpty()) {
                 Date defaultDate = new Date();  // Use the current date as default
 
@@ -111,8 +140,7 @@ public class Repository {
         });
     }
 
-
-
+    // Insert vacation with callback
     public void insert(Vacation vacation, VacationViewModel.InsertCallback callback) {
         databaseExecutor.execute(() -> {
             long vacationId = mVacationDAO.insert(vacation);
@@ -128,5 +156,9 @@ public class Repository {
         });
     }
 
-
+    // Delete callback interface
+    public interface VacationDeleteCallback {
+        void onVacationHasExcursions(int vacationId);
+        void onVacationDeleteSuccess();
+    }
 }

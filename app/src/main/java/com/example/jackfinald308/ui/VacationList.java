@@ -10,10 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.jackfinald308.R;
-import com.example.jackfinald308.entities.Excursion;
+import com.example.jackfinald308.database.Repository;
 import com.example.jackfinald308.viewmodel.VacationViewModel;
-
-import java.util.List;
 
 public class VacationList extends AppCompatActivity {
 
@@ -29,8 +27,9 @@ public class VacationList extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        // Adapter for the RecyclerView
-        final VacationAdapter adapter = new VacationAdapter();
+        // Initialize the repository and adapter
+        Repository repository = new Repository(getApplication());
+        final VacationAdapter adapter = new VacationAdapter(this, repository, this); // Pass LifecycleOwner (this)
         recyclerView.setAdapter(adapter);
 
         // Initialize ViewModel
@@ -43,7 +42,7 @@ public class VacationList extends AppCompatActivity {
             });
         });
 
-        // Find the button and set an OnClickListener
+        // Set up the Return to Main button
         buttonReturnToMain = findViewById(R.id.buttonReturnToMain);
         buttonReturnToMain.setOnClickListener(v -> {
             Intent intent = new Intent(VacationList.this, MainActivity.class);

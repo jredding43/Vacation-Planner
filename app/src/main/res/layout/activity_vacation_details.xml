@@ -125,12 +125,12 @@
             android:id="@+id/buttonSave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save Vacation"
+            android:layout_marginBottom="16dp"
             android:backgroundTint="@color/colorAccent"
-            android:textColor="@android:color/white"
             android:padding="16dp"
-            android:textSize="18sp"
-            android:layout_marginBottom="16dp" />
+            android:text="Save Without Excursions"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/buttonViewExcursionDetails"
@@ -139,7 +139,7 @@
             android:layout_marginBottom="16dp"
             android:backgroundTint="@color/colorAccent"
             android:padding="16dp"
-            android:text="View Excursion Details"
+            android:text="Add Excursion To Vacation"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
@@ -158,12 +158,13 @@
             android:id="@+id/buttonEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Edit Vacation"
+            android:layout_marginBottom="16dp"
             android:backgroundTint="@color/colorAccent"
-            android:textColor="@android:color/white"
             android:padding="16dp"
+            android:text="Edit Vacation"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
-            android:layout_marginBottom="16dp" />
+            android:visibility="visible" />
 
         <Button
             android:id="@+id/buttonDelete"
@@ -175,6 +176,6 @@
             android:text="Delete Vacation"
             android:textColor="@android:color/white"
             android:textSize="18sp"
-            android:visibility="visible" />
+            android:visibility="gone" />
     </LinearLayout>
 </ScrollView>

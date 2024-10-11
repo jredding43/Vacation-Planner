@@ -34,7 +34,11 @@ public class VacationViewModel extends AndroidViewModel {
 
     // Get excursions by vacation ID
     public LiveData<List<Excursion>> getExcursionsByVacationId(int vacationId) {
-        return repository.getExcursionsByVacationId(vacationId); // Calls the repository method
+        return repository.getExcursionsByVacationId(vacationId);
+    }
+
+    public void clearExcursionsForVacation(int vacationId) {
+        repository.deleteExcursionsByVacationId(vacationId);
     }
 
     public void insert(Vacation vacation, InsertCallback callback) {
@@ -46,9 +50,17 @@ public class VacationViewModel extends AndroidViewModel {
         repository.update(vacation);
     }
 
-    // Delete a vacation by ID
+    // Delete a vacation by ID with callback
     public void deleteVacation(int vacationId) {
-        repository.deleteVacation(vacationId);
+        repository.deleteVacation(vacationId, new Repository.VacationDeleteCallback() {
+            @Override
+            public void onVacationHasExcursions(int vacationId) {
+            }
+
+            @Override
+            public void onVacationDeleteSuccess() {
+            }
+        });
     }
 
     // Get all excursions

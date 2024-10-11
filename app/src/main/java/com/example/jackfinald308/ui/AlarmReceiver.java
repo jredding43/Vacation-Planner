@@ -18,7 +18,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         String vacationName = intent.getStringExtra("vacation_name");
         String message = intent.getStringExtra("message");
 
-        // Add excursion title and date if provided
+
         String excursionTitle = intent.getStringExtra("excursion_title");
         if (excursionTitle != null) {
             message = "Excursion: " + excursionTitle + " is happening today!";
@@ -27,7 +27,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         // Create the notification
         createNotificationChannel(context);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground) // Replace with your notification icon
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(vacationName)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

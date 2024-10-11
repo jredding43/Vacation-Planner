@@ -63,5 +63,50 @@
             android:textSize="14sp"
             android:textColor="@color/colorTextPrimary"
             android:layout_marginTop="4dp" />
+
+        <!-- Horizontal layout for Edit and Delete buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <!-- Edit Vacation Button -->
+            <ImageButton
+                android:id="@+id/btn_edit_vacation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="Edit Vacation"
+                android:src="@drawable/ic_edit"
+                app:tint="@color/colorPrimary" />
+
+            <!-- Edit Excursion Button -->
+            <ImageButton
+                android:id="@+id/btn_edit_excursion"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="Edit Excursion"
+                android:src="@drawable/ic_excursion"
+                app:tint="@color/colorPrimary" />
+
+            <!-- Delete Button -->
+            <ImageButton
+                android:id="@+id/btn_delete_vacation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/ic_delete"
+                android:contentDescription="Delete Vacation"
+                android:background="?attr/selectableItemBackground"
+                app:tint="@color/colorPrimary" />
+
+        </LinearLayout>
+
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>
