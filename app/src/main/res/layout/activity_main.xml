@@ -45,6 +45,20 @@
         app:icon="@drawable/ic_view_list"
         app:iconPadding="16dp"
         android:textColor="@android:color/white"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/colorPrimaryDark" />
+
+    <!-- Button to navigate toActivityReport -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonGenerateReport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View Reports"
+        android:textSize="18sp"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/ic_view_list"
+        app:iconPadding="16dp"
+        android:textColor="@android:color/white"
         android:backgroundTint="@color/colorPrimaryDark" />
 
 </LinearLayout>

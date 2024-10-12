@@ -1,0 +1,103 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/colorBackground">
+
+    <!-- Report Title -->
+    <TextView
+        android:id="@+id/reportTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vacation &amp; Excursion Report"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorTextPrimary"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Date and Time Stamp -->
+    <TextView
+        android:id="@+id/dateTimeStamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Generated on: 10/12/2024"
+        android:textSize="16sp"
+        android:textColor="@color/colorTextSecondary"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Buttons for Date Selection -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
+
+        <!-- Start Date Button -->
+        <Button
+            android:id="@+id/buttonStartDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Start Date"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_marginEnd="8dp"
+            android:padding="12dp" />
+
+        <!-- End Date Button -->
+        <Button
+            android:id="@+id/buttonEndDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select End Date"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@color/colorTextPrimary"
+            android:padding="12dp" />
+    </LinearLayout>
+
+    <!-- Generate Report Button -->
+    <Button
+        android:id="@+id/buttonGenerateReport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Generate Report"
+        android:backgroundTint="@color/colorAccent"
+        android:textColor="@color/colorTextPrimary"
+        android:padding="16dp"
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- ScrollView for Table Layout -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:background="@color/colorCardBackground">
+
+        <TableLayout
+            android:id="@+id/tableLayoutReport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*"
+            android:padding="8dp" />
+    </ScrollView>
+
+    <!-- Return Button to MainActivity -->
+    <Button
+        android:id="@+id/buttonReturnToMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Return to Home"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/colorTextPrimary"
+        android:padding="16dp"
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp" />
+
+</LinearLayout>

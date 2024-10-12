@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button buttonToVacation;
     private Button buttonToVacationList;
+    private Button buttonGenerateReport;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -24,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         NotificationHelper.createNotificationChannel(this);
-
 
         // Check if MainActivity was started by an alarm
         Intent intent = getIntent();
@@ -51,6 +51,13 @@ public class MainActivity extends AppCompatActivity {
         buttonToVacationList.setOnClickListener(v -> {
             Intent intent2 = new Intent(MainActivity.this, VacationList.class);
             startActivity(intent2);
+        });
+
+        // Initialize button to generate the report
+        buttonGenerateReport = findViewById(R.id.buttonGenerateReport);
+        buttonGenerateReport.setOnClickListener(v -> {
+            Intent intentReport = new Intent(MainActivity.this, ReportActivity.class);
+            startActivity(intentReport);
         });
     }
 
