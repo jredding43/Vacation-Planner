@@ -7,7 +7,7 @@
     android:padding="24dp"
     android:background="@android:color/white">
 
-    <!-- ListView for Excursions -->
+    <!-- Title for Excursions Selection -->
     <TextView
         android:id="@+id/textViewExcursionsTitle"
         android:layout_width="wrap_content"
@@ -18,6 +18,7 @@
         android:textColor="@android:color/black"
         android:layout_marginBottom="16dp" />
 
+    <!-- ListView for Excursions -->
     <ListView
         android:id="@+id/listViewExcursions"
         android:layout_width="match_parent"
@@ -39,4 +40,5 @@
         app:icon="@drawable/ic_check"
         app:iconPadding="16dp"
         android:layout_marginTop="16dp" />
+
 </LinearLayout>

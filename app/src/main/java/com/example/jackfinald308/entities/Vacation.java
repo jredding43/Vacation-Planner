@@ -30,12 +30,12 @@ public class Vacation implements Serializable {
         this.vacationName = vacationName;
         this.hotel = hotel;
         this.excursionID = excursionID;
-        this.toFlight = toFlight;
-        this.fromFlight = fromFlight;
+        this.toFlight = toFlight != null ? toFlight : ""; // Default value for toFlight
+        this.fromFlight = fromFlight != null ? fromFlight : ""; //Default value for fromFlight
         this.departDate = departDate;
         this.returnDate = returnDate;
-        this.adults = adults;
-        this.kids = kids;
+        this.adults = adults > 0 ? adults : 0; // Default value for adults
+        this.kids = kids >= 0 ? kids : 0; // Default value for kids
         this.excursionName = excursionName;
     }
 

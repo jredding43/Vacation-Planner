@@ -34,6 +34,7 @@ public class VacationActivity extends AppCompatActivity {
     private Button buttonAddUpdateVacation;
     private VacationViewModel vacationViewModel;
     private Spinner spinnerHotel;
+    private int vacationId = -1;
 
     private String[] airports = {
             "Select Destination",
@@ -63,7 +64,6 @@ public class VacationActivity extends AppCompatActivity {
             "Miami International Airport (MIA)",
             "Orlando International Airport (MCO)"
     };
-
 
     private String[] hotels = {
             "Select Hotel",
@@ -106,18 +106,88 @@ public class VacationActivity extends AppCompatActivity {
         editTextReturnDate.setOnClickListener(v -> showDatePicker(editTextReturnDate));
 
         // Handle add/update vacation
-        buttonAddUpdateVacation.setOnClickListener(v -> addVacation());
+        buttonAddUpdateVacation.setOnClickListener(v -> {
+            if (vacationId == -1) {
+                addVacation();
+            } else {
+                updateVacation(vacationId);
+            }
+        });
 
-        // Handling intent for vacation edit
+        // Check if this is an edit operation
         Intent intent = getIntent();
-        if (intent.hasExtra("vacation_id")) {
-            int vacationId = intent.getIntExtra("vacation_id", -1);
+        if (intent.hasExtra("VACATION_ID")) {
+            // We're editing an existing vacation, so set vacationId and pre-fill the fields
+            vacationId = intent.getIntExtra("VACATION_ID", -1);
             vacationViewModel.getVacationById(vacationId).observe(this, vacation -> {
                 if (vacation != null) {
-                    populateFields(vacation); // Populate fields if editing
+                    populateFields(vacation);
                 }
             });
         }
+    }
+
+    private void updateVacation(int vacationId) {
+        if (!validateInput()) return;
+
+        // Create a vacation object with the updated information
+        Vacation vacation = createVacationFromInput();
+        vacation.setVacationID(vacationId);  // Set the ID to update the existing vacation
+
+        // Update the vacation in the ViewModel
+        vacationViewModel.update(vacation);
+
+        // Schedule vacation start and end alerts
+        scheduleVacationAlerts(vacation);
+
+        Toast.makeText(this, "Vacation updated!", Toast.LENGTH_SHORT).show();
+        navigateToVacationDetails(vacation, vacationId);  // Pass the updated vacation to details
+    }
+
+    private Vacation createVacationFromInput() {
+        String vacationName = editTextVacationName.getText().toString();
+        String hotel = spinnerHotel.getSelectedItem().toString();
+        String departDate = editTextDepartDate.getText().toString();
+        String returnDate = editTextReturnDate.getText().toString();
+        String fromFlight = spinnerFromFlight.getSelectedItem().toString();
+        String toFlight = spinnerToFlight.getSelectedItem().toString();
+        int adults = !TextUtils.isEmpty(editTextAdults.getText()) ? Integer.parseInt(editTextAdults.getText().toString()) : 0;
+        int kids = !TextUtils.isEmpty(editTextKids.getText()) ? Integer.parseInt(editTextKids.getText().toString()) : 0;
+
+        return new Vacation(vacationName, hotel, 0, fromFlight, toFlight, departDate, returnDate, adults, kids, "");
+    }
+
+    private boolean validateInput() {
+        String vacationName = editTextVacationName.getText().toString();
+
+        // Validate required fields (vacation name and dates)
+        if (vacationName.isEmpty()) {
+            Toast.makeText(this, "Please enter a vacation name", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        // Validate date formats
+        String departDate = editTextDepartDate.getText().toString();
+        String returnDate = editTextReturnDate.getText().toString();
+        if (!isDateValid(departDate) || !isDateValid(returnDate)) {
+            Toast.makeText(this, "Please enter valid dates", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        // Validate that the return date is after the depart date
+        try {
+            Date depart = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).parse(departDate);
+            Date returnD = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).parse(returnDate);
+            if (returnD.before(depart)) {
+                Toast.makeText(this, "Return date must be after departure date", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        } catch (ParseException e) {
+            Toast.makeText(this, "Date parsing error", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
     }
 
     private void setupSpinner(Spinner spinner, String[] data) {
@@ -246,5 +316,17 @@ public class VacationActivity extends AppCompatActivity {
     private int getSpinnerPositionForHotel(String hotel) {
         ArrayAdapter<String> adapter = (ArrayAdapter<String>) spinnerHotel.getAdapter();
         return adapter.getPosition(hotel);
+    }
+
+    private void scheduleVacationAlerts(Vacation vacation) {
+        // Implementation for scheduling alerts (start and end date notifications)
+    }
+
+    private void navigateToVacationDetails(Vacation vacation, int vacationId) {
+        // Navigate to VacationDetails page
+        Intent intent = new Intent(VacationActivity.this, VacationDetails.class);
+        intent.putExtra("vacation", vacation);  // Pass the updated vacation object
+        intent.putExtra("vacation_id", vacationId);  // Pass the vacation ID
+        startActivity(intent);
     }
 }

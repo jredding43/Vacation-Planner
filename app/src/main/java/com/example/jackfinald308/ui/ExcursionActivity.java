@@ -1,7 +1,7 @@
 package com.example.jackfinald308.ui;
 
-
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -14,20 +14,21 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.jackfinald308.R;
 import com.example.jackfinald308.entities.Excursion;
+import com.example.jackfinald308.notifications.NotificationHelper;
 import com.example.jackfinald308.viewmodel.VacationViewModel;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.Locale;
 
 public class ExcursionActivity extends AppCompatActivity {
 
-    private TextView textViewExcursionName, textViewExcursionDate, textViewExcursionDescription;
+    private TextView textViewExcursionName, textViewExcursionDate;
     private VacationViewModel vacationViewModel;
     private ArrayList<Excursion> excursions; // List of selected excursions
     private Button buttonEdit, buttonDelete, buttonSave;
+    private int vacationId; // Vacation ID to link excursions
 
     @SuppressLint({"MissingInflatedId", "SetTextI18n"})
     @Override
@@ -38,13 +39,13 @@ public class ExcursionActivity extends AppCompatActivity {
         // Initialize Views
         textViewExcursionName = findViewById(R.id.textViewExcursionName);
         textViewExcursionDate = findViewById(R.id.textViewExcursionDate);
-        textViewExcursionDescription = findViewById(R.id.textViewExcursionDescription);
 
         // Initialize VacationViewModel
         vacationViewModel = new ViewModelProvider(this).get(VacationViewModel.class);
 
         // Get the excursion data from the intent
         excursions = getIntent().getParcelableArrayListExtra("selected_excursions");
+        vacationId = getIntent().getIntExtra("vacation_id", -1);
 
         // Get the LinearLayout container to dynamically add TextViews
         LinearLayout excursionContainer = findViewById(R.id.excursionContainer);
@@ -53,10 +54,19 @@ public class ExcursionActivity extends AppCompatActivity {
         if (excursions != null && !excursions.isEmpty()) {
             for (Excursion excursion : excursions) {
                 TextView excursionText = new TextView(this);
+
+                // Check if the excursion date is null
+                String formattedDate;
+                if (excursion.getDate() != null) {
+                    formattedDate = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault()).format(excursion.getDate());
+                } else {
+                    formattedDate = "No date available";  // Handle null date case
+                }
+
+                // Set the text with excursion details
                 excursionText.setText(
                         "Name: " + excursion.getName() + "\n" +
-                                "Date: " + new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(excursion.getDate()) + "\n" +
-                                "Description: " + excursion.getDescription()
+                                "Date: " + formattedDate
                 );
                 excursionText.setPadding(0, 16, 0, 16); // Add some padding for each TextView
                 excursionContainer.addView(excursionText);
@@ -107,41 +117,44 @@ public class ExcursionActivity extends AppCompatActivity {
 
     // Save all excursions logic
     private void saveExcursions() {
-        if (excursions == null || excursions.isEmpty()) {
-            Toast.makeText(this, "No excursions to save", Toast.LENGTH_SHORT).show();
+        int vacationId = getIntent().getIntExtra("vacation_id", -1);
+
+        if (vacationId == -1) {
+            Toast.makeText(this, "Invalid vacation ID.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Iterate through all selected excursions and save each one
-        for (Excursion excursion : excursions) {
-            String excursionName = excursion.getName();
-            String excursionDescription = excursion.getDescription();
-            String excursionDateString = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(excursion.getDate());
+        // Clear all existing excursions for the vacation (overwrite logic)
+        vacationViewModel.clearExcursionsForVacation(vacationId);
 
-            // Convert the date string into a Date object
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
-            Date excursionDate;
-            try {
-                excursionDate = dateFormat.parse(excursionDateString);
-            } catch (ParseException e) {
-                Toast.makeText(this, "Invalid date format for " + excursionName, Toast.LENGTH_SHORT).show();
-                continue; // Skip this excursion if the date format is invalid
+        if (excursions == null || excursions.isEmpty()) {
+            // If no excursions are selected, just clear and notify the user
+            Toast.makeText(this, "No excursions selected, cleared any existing excursions.", Toast.LENGTH_SHORT).show();
+        } else {
+            // Iterate through all selected excursions and save each one
+            for (Excursion excursion : excursions) {
+                excursion.setVacationId(vacationId);  // Ensure the correct vacation ID is set
+                vacationViewModel.insertExcursion(excursion);
+                // Schedule an alert for each excursion
+                scheduleExcursionAlert(excursion);
             }
-
-            // Update excursion object with new values
-            excursion.setDate(excursionDate);
-            excursion.setName(excursionName);
-            excursion.setDescription(excursionDescription);
-
-            // Save to the database via ViewModel for each excursion
-            vacationViewModel.insertExcursion(excursion);
+            Toast.makeText(this, "All excursions saved and updated!", Toast.LENGTH_SHORT).show();
         }
-
-        Toast.makeText(this, "All excursions saved!", Toast.LENGTH_SHORT).show();
 
         // Redirect back to MainActivity after saving all excursions
         Intent intent = new Intent(ExcursionActivity.this, MainActivity.class);
         startActivity(intent);
         finish();  // Close the current activity
     }
+
+
+    // Schedule alerts for the excursions
+    private void scheduleExcursionAlert(Excursion excursion) {
+        if (excursion.getDate() != null) {
+            long timeInMillis = excursion.getDate().getTime(); // Get the time in milliseconds
+            String message = "Excursion " + excursion.getName() + " is happening today!";
+            NotificationHelper.scheduleNotification(this, "Excursion Alert", message, timeInMillis);
+        }
+    }
+
 }

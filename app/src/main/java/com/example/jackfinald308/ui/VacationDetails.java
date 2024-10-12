@@ -119,8 +119,6 @@ public class VacationDetails extends AppCompatActivity {
         }
     }
 
-
-
     @SuppressLint("SetTextI18n")
     private void populateFields() {
         textViewVacationName.setText(vacation.getVacationName());
@@ -136,8 +134,8 @@ public class VacationDetails extends AppCompatActivity {
     private void shareVacationDetails() {
         String vacationDetails = "Vacation Name: " + vacation.getVacationName() + "\n" +
                 "Hotel: " + vacation.getHotel() + "\n" +
-                "To Flight: " + vacation.getToFlight() + "\n" +
-                "From Flight: " + vacation.getFromFlight() + "\n" +
+                 "To Flight: " + vacation.getToFlight() + "\n" +
+                 "From Flight: " + vacation.getFromFlight() + "\n" +
                 "Departure Date: " + vacation.getDepartDate() + "\n" +
                 "Return Date: " + vacation.getReturnDate() + "\n" +
                 "Adults: " + vacation.getAdults() + "\n" +
@@ -155,22 +153,14 @@ public class VacationDetails extends AppCompatActivity {
     private void saveVacationDetails() {
         if (vacation != null) {
             String updatedVacationName = textViewVacationName.getText().toString();
-            String updatedToFlight = textViewToFlight.getText().toString().replace("To Flight: ", "");
-            String updatedFromFlight = textViewFromFlight.getText().toString().replace("From Flight: ", "");
             String updatedDepartDate = textViewDepartDate.getText().toString().replace("Departure Date: ", "");
             String updatedReturnDate = textViewReturnDate.getText().toString().replace("Return Date: ", "");
-            int updatedAdults = Integer.parseInt(textViewAdults.getText().toString().replaceAll("[^0-9]", ""));
-            int updatedKids = Integer.parseInt(textViewKids.getText().toString().replaceAll("[^0-9]", ""));
             String updatedHotel = textViewHotel.getText().toString().replace("Hotel: ", "");
 
             // Update vacation object with new details
             vacation.setVacationName(updatedVacationName);
-            vacation.setToFlight(updatedToFlight);
-            vacation.setFromFlight(updatedFromFlight);
             vacation.setDepartDate(updatedDepartDate);
             vacation.setReturnDate(updatedReturnDate);
-            vacation.setAdults(updatedAdults);
-            vacation.setKids(updatedKids);
             vacation.setHotel(updatedHotel);
 
             // Save to the database
@@ -186,7 +176,6 @@ public class VacationDetails extends AppCompatActivity {
             finish();  // Close the current activity
         }
     }
-
 
     // Method to schedule the alarm for vacation start date
     private void scheduleVacationStartAlarm(Vacation vacation) {
@@ -206,5 +195,6 @@ public class VacationDetails extends AppCompatActivity {
         // Schedule the alarm using NotificationHelper or AlarmManager
         NotificationHelper.scheduleNotification(this, "Vacation Start Alert", startMessage, timeInMillis);
     }
+
 
 }

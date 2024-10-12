@@ -29,13 +29,13 @@ public class VacationList extends AppCompatActivity {
 
         // Initialize the repository and adapter
         Repository repository = new Repository(getApplication());
-        final VacationAdapter adapter = new VacationAdapter(this, repository, this); // Pass LifecycleOwner (this)
+        final VacationAdapter adapter = new VacationAdapter(this, repository, this);
         recyclerView.setAdapter(adapter);
 
         // Initialize ViewModel
         vacationViewModel = new ViewModelProvider(this).get(VacationViewModel.class);
 
-        // Observe vacations and excursions
+        // Observe vacations and update the adapter
         vacationViewModel.getAllVacations().observe(this, vacations -> {
             vacationViewModel.getAllExcursions().observe(this, excursions -> {
                 adapter.setVacations(vacations, excursions); // Pass both vacations and excursions to the adapter

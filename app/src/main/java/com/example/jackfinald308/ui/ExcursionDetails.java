@@ -57,24 +57,38 @@ public class ExcursionDetails extends AppCompatActivity {
         // Populate excursion descriptions
         populateExcursionDescriptions();
 
-        // Get vacation start date, end date, and vacation ID from the intent
-        vacationStartDate = (Calendar) getIntent().getSerializableExtra("vacation_start_date");
-        vacationEndDate = (Calendar) getIntent().getSerializableExtra("vacation_end_date");
-        vacationId = getIntent().getIntExtra("vacation_id", -1);
+        // Restore savedInstanceState or get values from Intent
+        if (savedInstanceState != null) {
+            vacationId = savedInstanceState.getInt("vacation_id", -1);
+            vacationStartDate = (Calendar) savedInstanceState.getSerializable("vacation_start_date");
+            vacationEndDate = (Calendar) savedInstanceState.getSerializable("vacation_end_date");
+        } else {
+            vacationStartDate = (Calendar) getIntent().getSerializableExtra("vacation_start_date");
+            vacationEndDate = (Calendar) getIntent().getSerializableExtra("vacation_end_date");
+            vacationId = getIntent().getIntExtra("vacation_id", -1);
+        }
+
+        // Handle missing vacation dates
+        if (vacationStartDate == null || vacationEndDate == null) {
+            Toast.makeText(this, "Error: Missing vacation start or end date.", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
 
         // Initialize list view with excursions
-        ArrayList<String> receivedExcursions = getIntent().getStringArrayListExtra("selected_excursions");
+        ArrayList<Excursion> receivedExcursions = getIntent().getParcelableArrayListExtra("selected_excursions");
         if (receivedExcursions != null) {
-            for (String name : receivedExcursions) {
-                String description = excursionDescriptions.get(name);
-                selectedExcursions.add(new Excursion(name, description, vacationId, null));
-            }
+            selectedExcursions.addAll(receivedExcursions);
         }
 
         // Initialize checkedItems
         checkedItems = new boolean[excursionNames.length];
         for (int i = 0; i < excursionNames.length; i++) {
-            checkedItems[i] = receivedExcursions != null && receivedExcursions.contains(excursionNames[i]);
+            final String excursionName = excursionNames[i];
+            if (receivedExcursions != null) {
+                checkedItems[i] = receivedExcursions.stream()
+                        .anyMatch(excursion -> excursion.getName().equals(excursionName));
+            }
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, excursionNames);
@@ -103,18 +117,34 @@ public class ExcursionDetails extends AppCompatActivity {
 
         // Handle confirm button click
         buttonConfirm.setOnClickListener(v -> {
+            // Navigate to ExcursionActivity with the selected excursions
+            Intent intent = new Intent(ExcursionDetails.this, ExcursionActivity.class);
+
+            // Pass the selected excursions (even if none are selected)
+            intent.putParcelableArrayListExtra("selected_excursions", selectedExcursions);
+
+            // Pass the vacation ID
+            intent.putExtra("vacation_id", vacationId);
+
+            // Show a toast message only if no excursions were selected
             if (selectedExcursions.isEmpty()) {
-                Toast.makeText(this, "No excursions selected", Toast.LENGTH_SHORT).show();
-            } else {
-                // Navigate to ExcursionActivity with the selected excursions
-                Intent intent = new Intent(ExcursionDetails.this, ExcursionActivity.class);
-                intent.putParcelableArrayListExtra("selected_excursions", selectedExcursions);
-                intent.putExtra("vacation_id", vacationId);
-                startActivity(intent);
-                finish();
+                Toast.makeText(this, "No excursions selected. Proceeding without excursions.", Toast.LENGTH_SHORT).show();
             }
+
+            // Start the next activity
+            startActivity(intent);
+            finish();
         });
 
+    }
+
+    // Override onSaveInstanceState to save vacationId and vacation dates during configuration changes
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("vacation_id", vacationId);
+        outState.putSerializable("vacation_start_date", vacationStartDate);
+        outState.putSerializable("vacation_end_date", vacationEndDate);
     }
 
     private void populateExcursionDescriptions() {
@@ -140,6 +170,7 @@ public class ExcursionDetails extends AppCompatActivity {
             Calendar selectedDate = Calendar.getInstance();
             selectedDate.set(selectedYear, selectedMonth, selectedDay);
 
+            // Check if the selected date is within the vacation period
             if (isDateWithinVacation(selectedDate)) {
                 excursion.setDate(selectedDate.getTime());
                 Toast.makeText(this, "Date set for " + excursion.getName(), Toast.LENGTH_SHORT).show();
@@ -148,10 +179,26 @@ public class ExcursionDetails extends AppCompatActivity {
             }
         }, year, month, day);
 
+        // Set minimum and maximum dates for the date picker
+        datePickerDialog.getDatePicker().setMinDate(vacationStartDate.getTimeInMillis());
+        datePickerDialog.getDatePicker().setMaxDate(vacationEndDate.getTimeInMillis());
+
         datePickerDialog.show();
     }
 
     private boolean isDateWithinVacation(Calendar selectedDate) {
+        setTimeToMidnight(selectedDate);
+        setTimeToMidnight(vacationStartDate);
+        setTimeToMidnight(vacationEndDate);
+
         return !selectedDate.before(vacationStartDate) && !selectedDate.after(vacationEndDate);
+    }
+
+    // Helper function to set the time of a Calendar object to midnight (00:00:00)
+    private void setTimeToMidnight(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
     }
 }

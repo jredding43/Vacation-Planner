@@ -19,8 +19,13 @@ import com.example.jackfinald308.database.Repository;
 import com.example.jackfinald308.entities.Excursion;
 import com.example.jackfinald308.entities.Vacation;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.VacationViewHolder> {
 
@@ -54,7 +59,7 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
         String vacationDates = "From: " + vacation.getDepartDate() + " To: " + vacation.getReturnDate();
         holder.vacationDatesTextView.setText(vacationDates);
 
-        // Set excursions
+        // Set excursions (each excursion with its date on a new line)
         String excursions = getExcursionNamesForVacation(vacation.getVacationID());
         if (excursions != null && !excursions.isEmpty()) {
             holder.excursionListTextView.setText(excursions);
@@ -96,18 +101,17 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
             });
         });
 
-        // Vacation edit button (edit vacation details)
-        holder.editVacationButton.setOnClickListener(v -> {
-            Intent intent = new Intent(context, VacationActivity.class);
-            intent.putExtra("VACATION_ID", vacation.getVacationID());
-
-            context.startActivity(intent);
-        });
-
         holder.editExcursionButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, ExcursionDetails.class);
             intent.putExtra("vacation_id", vacation.getVacationID());  // Pass the vacation ID
 
+            // Assuming your Vacation object contains start and end date information
+            Calendar startDate = getCalendarFromString(vacation.getDepartDate());
+            Calendar endDate = getCalendarFromString(vacation.getReturnDate());
+
+            // Pass the vacation start and end dates to the ExcursionDetails activity
+            intent.putExtra("vacation_start_date", startDate);  // Ensure you pass this value
+            intent.putExtra("vacation_end_date", endDate);      // Ensure you pass this value
 
             ArrayList<Excursion> excursionsForVacation = new ArrayList<>();
             for (Excursion excursion : excursionList) {
@@ -116,11 +120,27 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
                 }
             }
 
-            // Pass the selected excursions to ExcursionDetails
+            // Pass the selected excursions as Parcelable
             intent.putParcelableArrayListExtra("selected_excursions", excursionsForVacation);
             context.startActivity(intent);
         });
 
+
+
+    }
+
+    private Calendar getCalendarFromString(String dateString) {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        try {
+            Date date = sdf.parse(dateString);
+            if (date != null) {
+                calendar.setTime(date);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return calendar;
     }
 
     @Override
@@ -134,19 +154,25 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
         notifyDataSetChanged();
     }
 
-    // Helper function to get excursions for a vacation
     private String getExcursionNamesForVacation(int vacationId) {
-        StringBuilder excursionNames = new StringBuilder();
+        StringBuilder excursionInfo = new StringBuilder();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()); // Format for dates
+
         for (Excursion excursion : excursionList) {
             if (excursion.getVacationId() == vacationId) {
-                excursionNames.append(excursion.getName()).append(", ");
+                String excursionDate = excursion.getDate() != null ? sdf.format(excursion.getDate()) : "No date";
+                excursionInfo.append(excursion.getName()).append(" - ").append(excursionDate).append("\n");
             }
         }
-        if (excursionNames.length() > 0) {
-            excursionNames.setLength(excursionNames.length() - 2); // Remove the last comma and space
+
+        // Remove the last newline if it exists
+        if (excursionInfo.length() > 0) {
+            excursionInfo.setLength(excursionInfo.length() - 1);
         }
-        return excursionNames.toString();
+
+        return excursionInfo.toString();
     }
+
 
     public static class VacationViewHolder extends RecyclerView.ViewHolder {
         TextView vacationNameTextView, vacationDatesTextView, excursionListTextView;
