@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.jackfinald308"
+    namespace = "com.example.jackd424"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.jackfinald308"
+        applicationId = "com.example.jackd424"
         minSdk = 27
         targetSdk = 34
         versionCode = 1
@@ -45,4 +45,9 @@ dependencies {
     implementation (libs.room.runtime)
     annotationProcessor (libs.room.compiler)
     implementation (libs.cardview)
+
+    implementation (libs.firebase.bom)
+    implementation (libs.firebase.auth)
+
+    implementation (libs.firebase.ui.auth)
 }
