@@ -7,14 +7,24 @@
     android:layout_height="match_parent"
     tools:context=".ui.VacationList">
 
-    <!-- RecyclerView to display saved vacations -->
+    <!-- SearchView for searching vacations -->
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchVacation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:queryHint="Search Vacations"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- RecyclerView for displaying vacation list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="16dp"
         android:padding="16dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchVacation"
         app:layout_constraintBottom_toTopOf="@id/buttonReturnToMain"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -29,8 +39,8 @@
         android:textColor="@color/colorTextPrimary"
         android:padding="16dp"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

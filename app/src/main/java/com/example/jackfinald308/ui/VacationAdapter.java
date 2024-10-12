@@ -34,11 +34,15 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
     private Context context;
     private Repository repository;
     private LifecycleOwner lifecycleOwner;
+    private List<Vacation> vacationListFull;  // For search filtering
 
     public VacationAdapter(Context context, Repository repository, LifecycleOwner lifecycleOwner) {
         this.context = context;
         this.repository = repository;
         this.lifecycleOwner = lifecycleOwner;
+        this.vacationList = new ArrayList<>();
+        this.excursionList = new ArrayList<>();
+        this.vacationListFull = new ArrayList<>();  // For search filtering
     }
 
     @NonNull
@@ -124,9 +128,6 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
             intent.putParcelableArrayListExtra("selected_excursions", excursionsForVacation);
             context.startActivity(intent);
         });
-
-
-
     }
 
     private Calendar getCalendarFromString(String dateString) {
@@ -148,9 +149,28 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
         return vacationList == null ? 0 : vacationList.size();
     }
 
+    // Set vacations and excursions and update the full list for search filtering
     public void setVacations(List<Vacation> vacations, List<Excursion> excursions) {
         this.vacationList = vacations;
         this.excursionList = excursions;
+        this.vacationListFull = new ArrayList<>(vacations);  // Initialize the full list for filtering
+        notifyDataSetChanged();
+    }
+
+    // Filter method for search functionality
+    public void filter(String query) {
+        List<Vacation> filteredList = new ArrayList<>();
+        if (query == null || query.isEmpty()) {
+            filteredList = vacationListFull;
+        } else {
+            String filterPattern = query.toLowerCase().trim();
+            for (Vacation vacation : vacationListFull) {
+                if (vacation.getVacationName().toLowerCase().contains(filterPattern)) {
+                    filteredList.add(vacation);
+                }
+            }
+        }
+        vacationList = filteredList;
         notifyDataSetChanged();
     }
 
@@ -172,7 +192,6 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
 
         return excursionInfo.toString();
     }
-
 
     public static class VacationViewHolder extends RecyclerView.ViewHolder {
         TextView vacationNameTextView, vacationDatesTextView, excursionListTextView;
