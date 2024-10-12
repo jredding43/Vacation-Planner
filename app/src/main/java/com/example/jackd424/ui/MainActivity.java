@@ -5,18 +5,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.jackd424.R;
 import com.example.jackd424.notifications.NotificationHelper;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button buttonToVacation;
     private Button buttonToVacationList;
     private Button buttonGenerateReport;
+    private FirebaseAuth mAuth;
+    private TextView textViewUserEmail;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -25,6 +31,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         NotificationHelper.createNotificationChannel(this);
+
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
+        // Initialize the TextView for displaying user email
+        textViewUserEmail = findViewById(R.id.textViewUserEmail);
+
+        // Get the current user
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            // Display the current user's email
+            String userEmail = currentUser.getEmail();
+            textViewUserEmail.setText("Logged in as: " + userEmail);
+        } else {
+            // If no user is logged in, show a message and redirect to login
+            textViewUserEmail.setText("No user is logged in");
+            Toast.makeText(this, "No user is logged in. Redirecting to login page.", Toast.LENGTH_SHORT).show();
+
+        }
 
         // Check if MainActivity was started by an alarm
         Intent intent = getIntent();

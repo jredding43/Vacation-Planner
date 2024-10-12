@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "223836015335",
+    "project_id": "d424-capstone-ffdcd",
+    "storage_bucket": "d424-capstone-ffdcd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223836015335:android:f376a7fba0a0812fc0b042",
+        "android_client_info": {
+          "package_name": "com.example.jackd424"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBN1tCWZQ3ujP_NhiQKifOKUt9gKwxNfJk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
