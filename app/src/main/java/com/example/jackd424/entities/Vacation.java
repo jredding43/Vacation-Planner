@@ -5,6 +5,9 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Entity(tableName = "vacations")
@@ -133,5 +136,20 @@ public class Vacation implements Serializable {
 
     public void setExcursions(List<Excursion> excursions) {
         this.excursions = excursions;
+    }
+
+    // Method to check if return date is after departure date
+    public boolean isEndDateAfterStartDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            Date startDate = dateFormat.parse(departDate);
+            Date endDate = dateFormat.parse(returnDate);
+
+            return endDate != null && startDate != null && endDate.after(startDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false; // If there's an error in parsing dates, return false
+        }
     }
 }

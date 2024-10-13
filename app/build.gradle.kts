@@ -51,4 +51,14 @@ dependencies {
     implementation (libs.firebase.auth)
 
     implementation (libs.firebase.ui.auth)
+
+    //testing dependencies
+    // JUnit for unit tests
+    testImplementation (libs.junit)
+
+    // Mockito for mocking
+    testImplementation (libs.mockito.core)
+
+    testImplementation (libs.core)
+    testImplementation (libs.junit.v113)
 }
