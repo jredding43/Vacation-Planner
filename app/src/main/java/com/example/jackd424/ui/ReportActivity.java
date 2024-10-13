@@ -154,10 +154,6 @@ public class ReportActivity extends AppCompatActivity {
         endDate.setPadding(8, 8, 8, 8);
         headerRow.addView(endDate);
 
-        TextView hotel = new TextView(this);
-        hotel.setText("Location");
-        hotel.setPadding(8, 8, 8, 8);
-        headerRow.addView(hotel);
 
         tableLayoutReport.addView(headerRow);
     }
