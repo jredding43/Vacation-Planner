@@ -47,7 +47,7 @@ dependencies {
     annotationProcessor (libs.room.compiler)
     implementation (libs.cardview)
 
-    implementation (libs.firebase.bom)
+    implementation (platform(libs.firebase.bom))
     implementation (libs.firebase.auth)
 
     implementation (libs.firebase.ui.auth)

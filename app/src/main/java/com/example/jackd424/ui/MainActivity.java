@@ -2,9 +2,11 @@ package com.example.jackd424.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonGenerateReport;
     private FirebaseAuth mAuth;
     private TextView textViewUserEmail;
+    private Switch alarmSwitch;
+    private SharedPreferences sharedPreferences;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -50,6 +54,24 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "No user is logged in. Redirecting to login page.", Toast.LENGTH_SHORT).show();
 
         }
+
+        NotificationHelper.createNotificationChannel(this);
+
+        // Shared Preferences for saving alarm setting
+        sharedPreferences = getSharedPreferences("AlarmPreferences", MODE_PRIVATE);
+
+        // Initialize alarm switch
+        alarmSwitch = findViewById(R.id.alarmSwitch);
+        boolean isAlarmEnabled = sharedPreferences.getBoolean("isAlarmEnabled", true); // Default is enabled
+        alarmSwitch.setChecked(isAlarmEnabled);
+
+        alarmSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("isAlarmEnabled", isChecked);
+            editor.apply();
+            Toast.makeText(MainActivity.this, "Alarms " + (isChecked ? "Enabled" : "Disabled"), Toast.LENGTH_SHORT).show();
+        });
+
 
         // Check if MainActivity was started by an alarm
         Intent intent = getIntent();

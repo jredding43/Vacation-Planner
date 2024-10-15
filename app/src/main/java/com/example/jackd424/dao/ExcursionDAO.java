@@ -9,13 +9,14 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.example.jackd424.entities.Excursion;
+import com.example.jackd424.entities.Vacation;
 
 import java.util.List;
 
 @Dao
 public interface ExcursionDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(Excursion excursion);
+    long insert(Excursion excursion);
 
     @Update
     void update(Excursion excursion);
@@ -38,6 +39,5 @@ public interface ExcursionDAO {
 
     @Query("DELETE FROM excursions WHERE vacationId = :vacationId")
     void deleteExcursionsByVacationId(int vacationId);
-
 
 }

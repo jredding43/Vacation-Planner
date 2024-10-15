@@ -64,7 +64,7 @@
             android:textColor="@color/colorTextPrimary"
             android:layout_marginTop="4dp" />
 
-        <!-- Horizontal layout for Edit and Delete buttons -->
+        <!-- Horizontal layout for Edit, Delete, and Share buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -76,11 +76,12 @@
                 android:id="@+id/btn_edit_vacation"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginEnd="8dp"
+                android:layout_weight="1"
                 android:background="?attr/selectableItemBackground"
                 android:contentDescription="Edit Vacation"
                 android:src="@drawable/ic_edit"
+                android:visibility="visible"
                 app:tint="@color/colorPrimary" />
 
             <!-- Edit Excursion Button -->
@@ -105,8 +106,18 @@
                 android:background="?attr/selectableItemBackground"
                 app:tint="@color/colorPrimary" />
 
-        </LinearLayout>
+            <!-- Share Button -->
+            <ImageButton
+                android:id="@+id/btn_share_vacation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/ic_share"
+                android:contentDescription="Share Vacation"
+                android:background="?attr/selectableItemBackground"
+                app:tint="@color/colorPrimary" />
 
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

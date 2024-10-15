@@ -37,6 +37,8 @@ public interface VacationDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(Vacation vacation);
 
+    @Query("SELECT * FROM vacations WHERE vacationId = :vacationId LIMIT 1")
+    Vacation getVacationByIdSync(int vacationId);
 
 
 }

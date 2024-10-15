@@ -26,7 +26,7 @@ public class ExcursionActivity extends AppCompatActivity {
     private VacationViewModel vacationViewModel;
     private ArrayList<Excursion> excursions; // List of selected excursions
     private Button buttonEdit, buttonDelete, buttonSave;
-    private int vacationId; // Vacation ID to link excursions
+    private int vacationId;
 
     @SuppressLint({"MissingInflatedId", "SetTextI18n"})
     @Override

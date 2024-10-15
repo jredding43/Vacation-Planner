@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,25 +18,22 @@ import com.example.jackd424.R;
 import com.example.jackd424.entities.Excursion;
 import com.example.jackd424.viewmodel.VacationViewModel;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class ExcursionDetails extends AppCompatActivity {
 
     private HashMap<String, String> excursionDescriptions = new HashMap<>();
-    private ListView listViewExcursions;
-    private Button buttonConfirm, buttonDelete;
+    private EditText editTextExcursion;
+    private Button buttonAddExcursion, buttonDeleteExcursion, buttonConfirm;
+    private ListView listViewSelectedExcursions;
+    private ArrayAdapter<String> selectedExcursionsAdapter;
     private ArrayList<Excursion> selectedExcursions = new ArrayList<>();
-    private boolean[] checkedItems;
-    private String[] excursionNames = {
-            "Snorkeling Adventure", "Mountain Hiking", "City Tour",
-            "Safari Experience", "Cultural Cooking Class", "Beach Day",
-            "Wine Tasting Tour", "Wildlife Safari", "Hot Air Balloon Ride",
-            "Scuba Diving"
-    };
+    private ArrayList<String> selectedExcursionNames = new ArrayList<>();
 
-    // Vacation and excursion data
     private Calendar vacationStartDate;
     private Calendar vacationEndDate;
     private int vacationId;
@@ -47,9 +46,11 @@ public class ExcursionDetails extends AppCompatActivity {
         setContentView(R.layout.activity_excursion_details);
 
         // Initialize views
-        listViewExcursions = findViewById(R.id.listViewExcursions);
+        editTextExcursion = findViewById(R.id.autoCompleteExcursion);
+        buttonAddExcursion = findViewById(R.id.buttonAddExcursion);
+        buttonDeleteExcursion = findViewById(R.id.buttonDeleteExcursion);
         buttonConfirm = findViewById(R.id.buttonConfirm);
-        buttonDelete = findViewById(R.id.buttonDelete);
+        listViewSelectedExcursions = findViewById(R.id.listViewSelectedExcursions);
 
         // Initialize ViewModel
         vacationViewModel = new ViewModelProvider(this).get(VacationViewModel.class);
@@ -57,94 +58,78 @@ public class ExcursionDetails extends AppCompatActivity {
         // Populate excursion descriptions
         populateExcursionDescriptions();
 
-        // Restore savedInstanceState or get values from Intent
-        if (savedInstanceState != null) {
-            vacationId = savedInstanceState.getInt("vacation_id", -1);
-            vacationStartDate = (Calendar) savedInstanceState.getSerializable("vacation_start_date");
-            vacationEndDate = (Calendar) savedInstanceState.getSerializable("vacation_end_date");
-        } else {
-            vacationStartDate = (Calendar) getIntent().getSerializableExtra("vacation_start_date");
-            vacationEndDate = (Calendar) getIntent().getSerializableExtra("vacation_end_date");
-            vacationId = getIntent().getIntExtra("vacation_id", -1);
-        }
+        // Get vacation start date, end date, and vacation ID from the intent
+        vacationStartDate = (Calendar) getIntent().getSerializableExtra("vacation_start_date");
+        vacationEndDate = (Calendar) getIntent().getSerializableExtra("vacation_end_date");
+        vacationId = getIntent().getIntExtra("vacation_id", -1);
 
-        // Handle missing vacation dates
-        if (vacationStartDate == null || vacationEndDate == null) {
-            Toast.makeText(this, "Error: Missing vacation start or end date.", Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-
-        // Initialize list view with excursions
-        ArrayList<Excursion> receivedExcursions = getIntent().getParcelableArrayListExtra("selected_excursions");
-        if (receivedExcursions != null) {
-            selectedExcursions.addAll(receivedExcursions);
-        }
-
-        // Initialize checkedItems
-        checkedItems = new boolean[excursionNames.length];
-        for (int i = 0; i < excursionNames.length; i++) {
-            final String excursionName = excursionNames[i];
-            if (receivedExcursions != null) {
-                checkedItems[i] = receivedExcursions.stream()
-                        .anyMatch(excursion -> excursion.getName().equals(excursionName));
+        // Get existing excursions if passed from the previous screen
+        ArrayList<Excursion> existingExcursions = getIntent().getParcelableArrayListExtra("selected_excursions");
+        if (existingExcursions != null) {
+            selectedExcursions.addAll(existingExcursions);
+            for (Excursion excursion : existingExcursions) {
+                String formattedDate = "No date available";
+                if (excursion.getDate() != null) {
+                    formattedDate = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault()).format(excursion.getDate());
+                }
+                selectedExcursionNames.add(excursion.getName() + " - " + formattedDate);
             }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, excursionNames);
-        listViewExcursions.setAdapter(adapter);
-        listViewExcursions.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        // Set up ListView adapter for selected excursions
+        selectedExcursionsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, selectedExcursionNames);
+        listViewSelectedExcursions.setAdapter(selectedExcursionsAdapter);
 
-        // Set checked states for the ListView
-        for (int i = 0; i < checkedItems.length; i++) {
-            listViewExcursions.setItemChecked(i, checkedItems[i]);
-        }
+        // Add excursion button click listener
+        buttonAddExcursion.setOnClickListener(v -> {
+            String selectedExcursionName = editTextExcursion.getText().toString().trim();
+            if (selectedExcursionName.isEmpty()) {
+                Toast.makeText(this, "Please enter an excursion", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        // Add item click listener
-        listViewExcursions.setOnItemClickListener((parent, view, position, id) -> {
-            String excursionName = excursionNames[position];
-            if (listViewExcursions.isItemChecked(position)) {
-                String description = excursionDescriptions.get(excursionName);
-                Excursion newExcursion = new Excursion(excursionName, description, vacationId, null);
-                if (!selectedExcursions.contains(newExcursion)) {
-                    selectedExcursions.add(newExcursion);
-                    showDatePickerDialog(newExcursion);
+            if (!selectedExcursionNames.contains(selectedExcursionName)) {
+                String description = excursionDescriptions.get(selectedExcursionName);
+                Excursion newExcursion = new Excursion(selectedExcursionName, description, vacationId, null);
+                selectedExcursions.add(newExcursion);
+                selectedExcursionNames.add(newExcursion.getName() + " - No date available");  // Set default message for date
+                showDatePickerDialog(newExcursion);  // Allow the user to pick a date for the excursion
+                selectedExcursionsAdapter.notifyDataSetChanged();  // Update the ListView
+                editTextExcursion.setText(""); // Clear the EditText after adding the excursion
+            } else {
+                Toast.makeText(this, "Excursion already added", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Delete excursion button click listener
+        buttonDeleteExcursion.setOnClickListener(v -> {
+            if (!selectedExcursions.isEmpty()) {
+                int lastPosition = selectedExcursions.size() - 1;
+                if (lastPosition >= 0) {
+                    selectedExcursions.remove(lastPosition);
+                    selectedExcursionNames.remove(lastPosition);
+                    selectedExcursionsAdapter.notifyDataSetChanged();
+                    Toast.makeText(this, "Deleted last excursion!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Unable to delete the excursion. Index out of bounds!", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                selectedExcursions.removeIf(excursion -> excursion.getName().equals(excursionName));
+                Toast.makeText(this, "No excursions to delete!", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Handle confirm button click
+        // Confirm button click listener to send selected excursions to ExcursionActivity
         buttonConfirm.setOnClickListener(v -> {
-            // Navigate to ExcursionActivity with the selected excursions
-            Intent intent = new Intent(ExcursionDetails.this, ExcursionActivity.class);
-
-            // Pass the selected excursions (even if none are selected)
-            intent.putParcelableArrayListExtra("selected_excursions", selectedExcursions);
-
-            // Pass the vacation ID
-            intent.putExtra("vacation_id", vacationId);
-
-            // Show a toast message only if no excursions were selected
-            if (selectedExcursions.isEmpty()) {
-                Toast.makeText(this, "No excursions selected. Proceeding without excursions.", Toast.LENGTH_SHORT).show();
+            if (selectedExcursions != null && !selectedExcursions.isEmpty()) {
+                Intent intent = new Intent(ExcursionDetails.this, ExcursionActivity.class);
+                intent.putParcelableArrayListExtra("selected_excursions", selectedExcursions);
+                intent.putExtra("vacation_id", vacationId);
+                startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(this, "No excursions to pass.", Toast.LENGTH_SHORT).show();
             }
-
-            // Start the next activity
-            startActivity(intent);
-            finish();
         });
-
-    }
-
-    // Override onSaveInstanceState to save vacationId and vacation dates during configuration changes
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("vacation_id", vacationId);
-        outState.putSerializable("vacation_start_date", vacationStartDate);
-        outState.putSerializable("vacation_end_date", vacationEndDate);
     }
 
     private void populateExcursionDescriptions() {
@@ -170,35 +155,24 @@ public class ExcursionDetails extends AppCompatActivity {
             Calendar selectedDate = Calendar.getInstance();
             selectedDate.set(selectedYear, selectedMonth, selectedDay);
 
-            // Check if the selected date is within the vacation period
             if (isDateWithinVacation(selectedDate)) {
-                excursion.setDate(selectedDate.getTime());
-                Toast.makeText(this, "Date set for " + excursion.getName(), Toast.LENGTH_SHORT).show();
+                excursion.setDate(selectedDate.getTime());  // Set date in the Excursion object
+
+                int index = selectedExcursions.indexOf(excursion);
+                if (index >= 0 && index < selectedExcursionNames.size()) {
+                    String formattedDate = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault()).format(excursion.getDate());
+                    selectedExcursionNames.set(index, excursion.getName() + " - " + formattedDate);  // Update with selected date
+                    selectedExcursionsAdapter.notifyDataSetChanged();  // Refresh the ListView
+                }
             } else {
                 Toast.makeText(this, "Excursion date must be within the vacation period!", Toast.LENGTH_LONG).show();
             }
         }, year, month, day);
 
-        // Set minimum and maximum dates for the date picker
-        datePickerDialog.getDatePicker().setMinDate(vacationStartDate.getTimeInMillis());
-        datePickerDialog.getDatePicker().setMaxDate(vacationEndDate.getTimeInMillis());
-
         datePickerDialog.show();
     }
 
     private boolean isDateWithinVacation(Calendar selectedDate) {
-        setTimeToMidnight(selectedDate);
-        setTimeToMidnight(vacationStartDate);
-        setTimeToMidnight(vacationEndDate);
-
         return !selectedDate.before(vacationStartDate) && !selectedDate.after(vacationEndDate);
-    }
-
-    // Helper function to set the time of a Calendar object to midnight (00:00:00)
-    private void setTimeToMidnight(Calendar calendar) {
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
     }
 }

@@ -7,7 +7,7 @@
     android:padding="24dp"
     android:background="@android:color/white">
 
-    <!-- Title for Excursions Selection -->
+    <!-- Title TextView -->
     <TextView
         android:id="@+id/textViewExcursionsTitle"
         android:layout_width="wrap_content"
@@ -18,14 +18,41 @@
         android:textColor="@android:color/black"
         android:layout_marginBottom="16dp" />
 
-    <!-- ListView for Excursions -->
-    <ListView
-        android:id="@+id/listViewExcursions"
+    <!-- EditText for entering excursion -->
+    <EditText
+        android:id="@+id/autoCompleteExcursion"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp" />
+        android:layout_height="wrap_content"
+        android:hint="Enter Excursion" />
+
+    <!-- Add and Delete Excursion Buttons -->
+    <Button
+        android:id="@+id/buttonAddExcursion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Excursion"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/buttonDeleteExcursion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete Excursion"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginTop="16dp" />
+
+    <!-- ListView for displaying selected excursions -->
+    <ListView
+        android:id="@+id/listViewSelectedExcursions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice"
+        android:layout_marginTop="16dp" />
 
     <!-- Confirm Button -->
     <com.google.android.material.button.MaterialButton
@@ -36,9 +63,5 @@
         android:textSize="18sp"
         android:textColor="@android:color/white"
         android:backgroundTint="@color/colorPrimary"
-        app:cornerRadius="8dp"
-        app:icon="@drawable/ic_check"
-        app:iconPadding="16dp"
         android:layout_marginTop="16dp" />
-
 </LinearLayout>

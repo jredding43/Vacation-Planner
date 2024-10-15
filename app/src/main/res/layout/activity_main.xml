@@ -96,5 +96,36 @@
             android:layout_marginBottom="16dp"
             android:background="@drawable/rounded_button"/>
 
+        <!-- Alarm Switch Section -->
+        <TextView
+            android:id="@+id/textViewAlarmLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alarms"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/textViewAlarmDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enable alarms to get notified about upcoming vacations and excursions."
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginBottom="16dp" />
+
+        <Switch
+            android:id="@+id/alarmSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enable Alarms"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp"
+            android:thumbTint="@color/colorAccent"
+            android:trackTint="@color/colorPrimaryDark" />
+
     </LinearLayout>
 </ScrollView>

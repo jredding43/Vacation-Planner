@@ -11,12 +11,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.jackd424.R;
+import com.example.jackd424.entities.Excursion;
 import com.example.jackd424.entities.Vacation;
 import com.example.jackd424.notifications.NotificationHelper;
 import com.example.jackd424.viewmodel.VacationViewModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -36,12 +38,12 @@ public class VacationDetails extends AppCompatActivity {
 
         // Initialize Views
         textViewVacationName = findViewById(R.id.textViewVacationName);
-        textViewToFlight = findViewById(R.id.textViewToFlight);
-        textViewFromFlight = findViewById(R.id.textViewFromFlight);
+        // textViewToFlight = findViewById(R.id.textViewToFlight);
+        // textViewFromFlight = findViewById(R.id.textViewFromFlight);
         textViewDepartDate = findViewById(R.id.textViewDepartDate);
         textViewReturnDate = findViewById(R.id.textViewReturnDate);
-        textViewAdults = findViewById(R.id.textViewAdults);
-        textViewKids = findViewById(R.id.textViewKids);
+        // textViewAdults = findViewById(R.id.textViewAdults);
+        // textViewKids = findViewById(R.id.textViewKids);
         textViewHotel = findViewById(R.id.textViewHotel);
         buttonViewExcursionDetails = findViewById(R.id.buttonViewExcursionDetails);
 
@@ -90,19 +92,36 @@ public class VacationDetails extends AppCompatActivity {
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
 
             try {
+                // Parse the vacation's start and end dates
                 vacationStartDate.setTime(sdf.parse(vacation.getDepartDate()));
                 vacationEndDate.setTime(sdf.parse(vacation.getReturnDate()));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
 
-            // Create an intent and pass the vacation details to ExcursionDetails
-            Intent intentExcursions = new Intent(VacationDetails.this, ExcursionDetails.class);
-            intentExcursions.putExtra("vacation_id", vacationId);
-            intentExcursions.putExtra("vacation_start_date", vacationStartDate); // Pass start date
-            intentExcursions.putExtra("vacation_end_date", vacationEndDate);   // Pass end date
-            startActivity(intentExcursions);
+            // Fetch excursions associated with the vacation
+            vacationViewModel.getExcursionsByVacationId(vacationId).observe(this, excursions -> {
+                // Check if there are any associated excursions to pass along
+                if (excursions != null && !excursions.isEmpty()) {
+                    // Create an intent and pass the vacation details and excursions to ExcursionDetails
+                    Intent intentExcursions = new Intent(VacationDetails.this, ExcursionDetails.class);
+                    intentExcursions.putExtra("vacation_id", vacationId);
+                    intentExcursions.putExtra("vacation_start_date", vacationStartDate); // Pass start date
+                    intentExcursions.putExtra("vacation_end_date", vacationEndDate);   // Pass end date
+                    intentExcursions.putParcelableArrayListExtra("selected_excursions", new ArrayList<>(excursions));  // Pass associated excursions
+
+                    startActivity(intentExcursions);
+                } else {
+                    // If no excursions are found, pass only the vacation details
+                    Intent intentExcursions = new Intent(VacationDetails.this, ExcursionDetails.class);
+                    intentExcursions.putExtra("vacation_id", vacationId);
+                    intentExcursions.putExtra("vacation_start_date", vacationStartDate); // Pass start date
+                    intentExcursions.putExtra("vacation_end_date", vacationEndDate);   // Pass end date
+                    startActivity(intentExcursions);
+                }
+            });
         });
+
     }
 
     private void deleteVacation(int vacationId) {
@@ -122,24 +141,24 @@ public class VacationDetails extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void populateFields() {
         textViewVacationName.setText(vacation.getVacationName());
-        textViewToFlight.setText("To Flight: " + vacation.getToFlight());
-        textViewFromFlight.setText("From Flight: " + vacation.getFromFlight());
+        // textViewToFlight.setText("To Flight: " + vacation.getToFlight());
+        // textViewFromFlight.setText("From Flight: " + vacation.getFromFlight());
         textViewDepartDate.setText("Departure Date: " + vacation.getDepartDate());
         textViewReturnDate.setText("Return Date: " + vacation.getReturnDate());
-        textViewAdults.setText("Number of Adults: " + vacation.getAdults());
-        textViewKids.setText("Number of Kids: " + vacation.getKids());
+        // textViewAdults.setText("Number of Adults: " + vacation.getAdults());
+        // textViewKids.setText("Number of Kids: " + vacation.getKids());
         textViewHotel.setText("Hotel: " + vacation.getHotel());
     }
 
     private void shareVacationDetails() {
         String vacationDetails = "Vacation Name: " + vacation.getVacationName() + "\n" +
                 "Hotel: " + vacation.getHotel() + "\n" +
-                 "To Flight: " + vacation.getToFlight() + "\n" +
-                 "From Flight: " + vacation.getFromFlight() + "\n" +
+                // "To Flight: " + vacation.getToFlight() + "\n" +
+                // "From Flight: " + vacation.getFromFlight() + "\n" +
                 "Departure Date: " + vacation.getDepartDate() + "\n" +
-                "Return Date: " + vacation.getReturnDate() + "\n" +
-                "Adults: " + vacation.getAdults() + "\n" +
-                "Kids: " + vacation.getKids();
+                "Return Date: " + vacation.getReturnDate() + "\n";
+        // "Adults: " + vacation.getAdults() + "\n" +
+        // "Kids: " + vacation.getKids();
 
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);

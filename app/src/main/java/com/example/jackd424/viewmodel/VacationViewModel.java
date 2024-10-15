@@ -1,6 +1,8 @@
 package com.example.jackd424.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
@@ -18,17 +20,26 @@ public class VacationViewModel extends AndroidViewModel {
     public VacationViewModel(Application application) {
         super(application);
         repository = new Repository(application);
+        repository.getAllVacations();
         allVacations = repository.getAllVacations();
-        allExcursions = repository.getAllExcursions(); // This should now return LiveData<List<Excursion>>
+        allExcursions = repository.getAllExcursions();
     }
+
+
 
     // Get a specific vacation by its ID
     public LiveData<Vacation> getVacationById(int vacationId) {
         return repository.getVacationById(vacationId);
     }
 
+    // Method to insert an excursion
+    public void insertExcursion(Excursion excursion) {
+        repository.insert(excursion);
+    }
+
     // Get all vacations
     public LiveData<List<Vacation>> getAllVacations() {
+        Log.d("VacationRepository", "Fetching all vacations from the database");
         return allVacations;
     }
 
@@ -37,6 +48,7 @@ public class VacationViewModel extends AndroidViewModel {
         return repository.getExcursionsByVacationId(vacationId);
     }
 
+
     public void clearExcursionsForVacation(int vacationId) {
         repository.deleteExcursionsByVacationId(vacationId);
     }
@@ -44,6 +56,7 @@ public class VacationViewModel extends AndroidViewModel {
     public void insert(Vacation vacation, InsertCallback callback) {
         repository.insert(vacation, callback);
     }
+
 
     // Update a vacation
     public void update(Vacation vacation) {
@@ -69,9 +82,10 @@ public class VacationViewModel extends AndroidViewModel {
     }
 
     // Insert an excursion
-    public void insertExcursion(Excursion excursion) {
-        repository.insert(excursion);
+    public void insertExcursionForVacation(Excursion excursion, int vacationId) {
+        repository.insertExcursionForVacation(excursion, vacationId);
     }
+
 
     // Update an excursion
     public void updateExcursion(Excursion excursion) {

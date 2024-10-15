@@ -25,10 +25,11 @@ public class Repository {
     private static final ExecutorService databaseExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     public Repository(Application application) {
-        VacationDatabase db = VacationDatabase.getInstance(application);
+        VacationDatabase db = VacationDatabase.getInstance(application.getApplicationContext());
         mVacationDAO = db.vacationDAO();
         mExcursionDAO = db.excursionDAO();
     }
+
 
     // Observes if a vacation has associated excursions
     public LiveData<Boolean> hasAssociatedExcursions(int vacationId) {
@@ -43,21 +44,29 @@ public class Repository {
 
     // Deletes a vacation (checks for associated excursions before deleting)
     public void deleteVacation(int vacationId, VacationDeleteCallback callback) {
+        // Observe LiveData on the main thread, and once observed, delete vacation on background thread
         new Handler(Looper.getMainLooper()).post(() -> {
             hasAssociatedExcursions(vacationId).observeForever(hasExcursions -> {
                 if (hasExcursions) {
+                    // Vacation has excursions, cannot delete
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        callback.onVacationHasExcursions(vacationId);
+                        callback.onVacationHasExcursions(vacationId);  // Ensure callback runs on the main thread
                     });
                 } else {
+                    // Delete vacation in the background
                     databaseExecutor.execute(() -> {
                         mVacationDAO.deleteById(vacationId);
-                        new Handler(Looper.getMainLooper()).post(callback::onVacationDeleteSuccess);
+
+                        // Ensure that the success callback is posted back to the main thread
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            callback.onVacationDeleteSuccess();  // Callback on the main thread
+                        });
                     });
                 }
             });
         });
     }
+
 
     // Deletes all excursions associated with a vacation
     public void deleteExcursionsByVacationId(int vacationId) {
@@ -137,6 +146,7 @@ public class Repository {
         databaseExecutor.execute(() -> {
             long vacationId = mVacationDAO.insert(vacation);
 
+            // Post the result back to the UI thread
             new Handler(Looper.getMainLooper()).post(() -> {
                 if (vacationId != -1) {
                     callback.onInsertSuccess((int) vacationId);
@@ -152,4 +162,21 @@ public class Repository {
         void onVacationHasExcursions(int vacationId);
         void onVacationDeleteSuccess();
     }
+
+    public void insertExcursionForVacation(Excursion excursion, int vacationId) {
+        databaseExecutor.execute(() -> {
+            long excursionId = mExcursionDAO.insert(excursion);  // Insert excursion and get its ID
+            updateVacationWithExcursion((int) excursionId, vacationId, excursion.getName());
+        });
+    }
+
+    public void updateVacationWithExcursion(int excursionId, int vacationId, String excursionName) {
+        Vacation vacation = mVacationDAO.getVacationByIdSync(vacationId);
+        if (vacation != null) {
+            vacation.setExcursionID(excursionId);  // Update excursionID
+            vacation.setExcursionName(excursionName);  // Update excursionName
+            mVacationDAO.update(vacation);  // Update vacation in the database
+        }
+    }
+
 }

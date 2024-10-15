@@ -2,6 +2,7 @@ package com.example.jackd424.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +20,8 @@ import com.example.jackd424.database.Repository;
 import com.example.jackd424.entities.Excursion;
 import com.example.jackd424.entities.Vacation;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,15 +32,11 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
     private Context context;
     private Repository repository;
     private LifecycleOwner lifecycleOwner;
-    private List<Vacation> vacationListFull;  // For search filtering
 
     public VacationAdapter(Context context, Repository repository, LifecycleOwner lifecycleOwner) {
         this.context = context;
         this.repository = repository;
         this.lifecycleOwner = lifecycleOwner;
-        this.vacationList = new ArrayList<>();
-        this.excursionList = new ArrayList<>();
-        this.vacationListFull = new ArrayList<>();  // For search filtering
     }
 
     @NonNull
@@ -58,13 +52,11 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
 
         // Set vacation name
         holder.vacationNameTextView.setText(vacation.getVacationName());
-
-        // Set vacation dates
         String vacationDates = "From: " + vacation.getDepartDate() + " To: " + vacation.getReturnDate();
         holder.vacationDatesTextView.setText(vacationDates);
 
-        // Set excursions (each excursion with its date on a new line)
-        String excursions = getExcursionNamesForVacation(vacation.getVacationID());
+        // Set excursions for this vacation
+        String excursions = getExcursionDetailsForVacation(vacation.getVacationID());
         if (excursions != null && !excursions.isEmpty()) {
             holder.excursionListTextView.setText(excursions);
         } else {
@@ -105,43 +97,76 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
             });
         });
 
+        // Vacation edit button (edit vacation details)
+        holder.editVacationButton.setOnClickListener(v -> {
+            Intent intent = new Intent(context, VacationActivity.class);
+            intent.putExtra("VACATION_ID", vacation.getVacationID());  // Pass the vacation ID
+            context.startActivity(intent);
+        });
+
+
+
         holder.editExcursionButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, ExcursionDetails.class);
+
+            // Pass vacation details
             intent.putExtra("vacation_id", vacation.getVacationID());  // Pass the vacation ID
+            intent.putExtra("vacation_name", vacation.getVacationName());  // Pass vacation name
+            intent.putExtra("vacation_depart_date", vacation.getDepartDate());  // Pass departure date
+            intent.putExtra("vacation_return_date", vacation.getReturnDate());  // Pass return date
 
-            // Assuming your Vacation object contains start and end date information
-            Calendar startDate = getCalendarFromString(vacation.getDepartDate());
-            Calendar endDate = getCalendarFromString(vacation.getReturnDate());
-
-            // Pass the vacation start and end dates to the ExcursionDetails activity
-            intent.putExtra("vacation_start_date", startDate);  // Ensure you pass this value
-            intent.putExtra("vacation_end_date", endDate);      // Ensure you pass this value
-
+            // Create a list to store excursions for this vacation
             ArrayList<Excursion> excursionsForVacation = new ArrayList<>();
             for (Excursion excursion : excursionList) {
                 if (excursion.getVacationId() == vacation.getVacationID()) {
-                    excursionsForVacation.add(excursion);
+                    excursionsForVacation.add(excursion);  // Add excursions related to this vacation
                 }
             }
 
-            // Pass the selected excursions as Parcelable
-            intent.putParcelableArrayListExtra("selected_excursions", excursionsForVacation);
+            // Pass the excursions list to the next activity
+            intent.putParcelableArrayListExtra("selected_excursions", excursionsForVacation);  // Pass the excursions list
             context.startActivity(intent);
+        });
+
+
+
+        // Share vacation details via text or email
+        holder.btnShareVacation.setOnClickListener(v -> {
+            String vacationName = vacation.getVacationName();
+            String vacationDates2 = "From: " + vacation.getDepartDate() + " To: " + vacation.getReturnDate();
+            String excursions2 = getExcursionDetailsForVacation(vacation.getVacationID());
+
+            String shareMessage = "Vacation: " + vacationName + "\n"
+                    + "Dates: " + vacationDates2 + "\n"
+                    + "Excursions: " + (excursions2.isEmpty() ? "No excursions" : excursions2);
+
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+            context.startActivity(Intent.createChooser(shareIntent, "Share Vacation via"));
         });
     }
 
-    private Calendar getCalendarFromString(String dateString) {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
-        try {
-            Date date = sdf.parse(dateString);
-            if (date != null) {
-                calendar.setTime(date);
+    private String getExcursionDetailsForVacation(int vacationId) {
+        StringBuilder excursionDetails = new StringBuilder();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()); // Adjust format as needed
+
+        for (Excursion excursion : excursionList) {
+            if (excursion.getVacationId() == vacationId) {
+                // Format the excursion date to display only the date part
+                String formattedDate = dateFormat.format(excursion.getDate());
+
+                // Append excursion name and formatted date
+                excursionDetails.append(excursion.getName())
+                        .append(" - ")
+                        .append(formattedDate)
+                        .append("\n");
             }
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
-        return calendar;
+        if (excursionDetails.length() > 0) {
+            excursionDetails.setLength(excursionDetails.length() - 1);  // Remove trailing newline
+        }
+        return excursionDetails.toString();
     }
 
     @Override
@@ -149,53 +174,29 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
         return vacationList == null ? 0 : vacationList.size();
     }
 
-    // Set vacations and excursions and update the full list for search filtering
     public void setVacations(List<Vacation> vacations, List<Excursion> excursions) {
         this.vacationList = vacations;
         this.excursionList = excursions;
-        this.vacationListFull = new ArrayList<>(vacations);  // Initialize the full list for filtering
         notifyDataSetChanged();
     }
 
-    // Filter method for search functionality
-    public void filter(String query) {
-        List<Vacation> filteredList = new ArrayList<>();
-        if (query == null || query.isEmpty()) {
-            filteredList = vacationListFull;
-        } else {
-            String filterPattern = query.toLowerCase().trim();
-            for (Vacation vacation : vacationListFull) {
-                if (vacation.getVacationName().toLowerCase().contains(filterPattern)) {
-                    filteredList.add(vacation);
-                }
-            }
-        }
-        vacationList = filteredList;
-        notifyDataSetChanged();
-    }
-
+    // Helper function to get excursions for a vacation
     private String getExcursionNamesForVacation(int vacationId) {
-        StringBuilder excursionInfo = new StringBuilder();
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()); // Format for dates
-
+        StringBuilder excursionNames = new StringBuilder();
         for (Excursion excursion : excursionList) {
             if (excursion.getVacationId() == vacationId) {
-                String excursionDate = excursion.getDate() != null ? sdf.format(excursion.getDate()) : "No date";
-                excursionInfo.append(excursion.getName()).append(" - ").append(excursionDate).append("\n");
+                excursionNames.append(excursion.getName()).append(", ");
             }
         }
-
-        // Remove the last newline if it exists
-        if (excursionInfo.length() > 0) {
-            excursionInfo.setLength(excursionInfo.length() - 1);
+        if (excursionNames.length() > 0) {
+            excursionNames.setLength(excursionNames.length() - 2);
         }
-
-        return excursionInfo.toString();
+        return excursionNames.toString();
     }
 
     public static class VacationViewHolder extends RecyclerView.ViewHolder {
         TextView vacationNameTextView, vacationDatesTextView, excursionListTextView;
-        ImageButton editVacationButton, editExcursionButton, deleteButton;
+        ImageButton editVacationButton, editExcursionButton, deleteButton, btnShareVacation;
 
         public VacationViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -205,6 +206,7 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
             editVacationButton = itemView.findViewById(R.id.btn_edit_vacation);
             editExcursionButton = itemView.findViewById(R.id.btn_edit_excursion);
             deleteButton = itemView.findViewById(R.id.btn_delete_vacation);
+            btnShareVacation = itemView.findViewById(R.id.btn_share_vacation); // New share button
         }
     }
 }
