@@ -38,12 +38,12 @@ public class VacationDetails extends AppCompatActivity {
 
         // Initialize Views
         textViewVacationName = findViewById(R.id.textViewVacationName);
-        // textViewToFlight = findViewById(R.id.textViewToFlight);
-        // textViewFromFlight = findViewById(R.id.textViewFromFlight);
+         textViewToFlight = findViewById(R.id.textViewToFlight);
+         textViewFromFlight = findViewById(R.id.textViewFromFlight);
         textViewDepartDate = findViewById(R.id.textViewDepartDate);
         textViewReturnDate = findViewById(R.id.textViewReturnDate);
-        // textViewAdults = findViewById(R.id.textViewAdults);
-        // textViewKids = findViewById(R.id.textViewKids);
+         textViewAdults = findViewById(R.id.textViewAdults);
+         textViewKids = findViewById(R.id.textViewKids);
         textViewHotel = findViewById(R.id.textViewHotel);
         buttonViewExcursionDetails = findViewById(R.id.buttonViewExcursionDetails);
 
@@ -141,12 +141,12 @@ public class VacationDetails extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void populateFields() {
         textViewVacationName.setText(vacation.getVacationName());
-        // textViewToFlight.setText("To Flight: " + vacation.getToFlight());
-        // textViewFromFlight.setText("From Flight: " + vacation.getFromFlight());
+         textViewToFlight.setText("To Flight: " + vacation.getToFlight());
+         textViewFromFlight.setText("From Flight: " + vacation.getFromFlight());
         textViewDepartDate.setText("Departure Date: " + vacation.getDepartDate());
         textViewReturnDate.setText("Return Date: " + vacation.getReturnDate());
-        // textViewAdults.setText("Number of Adults: " + vacation.getAdults());
-        // textViewKids.setText("Number of Kids: " + vacation.getKids());
+         textViewAdults.setText("Number of Adults: " + vacation.getAdults());
+         textViewKids.setText("Number of Kids: " + vacation.getKids());
         textViewHotel.setText("Hotel: " + vacation.getHotel());
     }
 
@@ -156,9 +156,9 @@ public class VacationDetails extends AppCompatActivity {
                 // "To Flight: " + vacation.getToFlight() + "\n" +
                 // "From Flight: " + vacation.getFromFlight() + "\n" +
                 "Departure Date: " + vacation.getDepartDate() + "\n" +
-                "Return Date: " + vacation.getReturnDate() + "\n";
-        // "Adults: " + vacation.getAdults() + "\n" +
-        // "Kids: " + vacation.getKids();
+                "Return Date: " + vacation.getReturnDate() + "\n" +
+                 "Adults: " + vacation.getAdults() + "\n" +
+                 "Kids: " + vacation.getKids();
 
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);

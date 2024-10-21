@@ -147,12 +147,13 @@
             android:id="@+id/buttonShare"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Share Vacation"
+            android:layout_marginBottom="16dp"
             android:backgroundTint="@color/colorAccent"
-            android:textColor="@android:color/white"
             android:padding="16dp"
+            android:text="Share Vacation"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
-            android:layout_marginBottom="16dp" />
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/buttonEdit"

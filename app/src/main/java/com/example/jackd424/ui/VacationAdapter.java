@@ -180,19 +180,6 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
         notifyDataSetChanged();
     }
 
-    // Helper function to get excursions for a vacation
-    private String getExcursionNamesForVacation(int vacationId) {
-        StringBuilder excursionNames = new StringBuilder();
-        for (Excursion excursion : excursionList) {
-            if (excursion.getVacationId() == vacationId) {
-                excursionNames.append(excursion.getName()).append(", ");
-            }
-        }
-        if (excursionNames.length() > 0) {
-            excursionNames.setLength(excursionNames.length() - 2);
-        }
-        return excursionNames.toString();
-    }
 
     public static class VacationViewHolder extends RecyclerView.ViewHolder {
         TextView vacationNameTextView, vacationDatesTextView, excursionListTextView;

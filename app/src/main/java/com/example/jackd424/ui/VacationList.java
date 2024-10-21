@@ -2,7 +2,9 @@ package com.example.jackd424.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -11,12 +13,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.jackd424.R;
 import com.example.jackd424.database.Repository;
+import com.example.jackd424.entities.Vacation;
 import com.example.jackd424.viewmodel.VacationViewModel;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class VacationList extends AppCompatActivity {
 
     private VacationViewModel vacationViewModel;
     private Button buttonReturnToMain;
+    private EditText searchVacationInput;
+    private Button buttonSearchVacation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +56,37 @@ public class VacationList extends AppCompatActivity {
             Intent intent = new Intent(VacationList.this, MainActivity.class);
             startActivity(intent);
             finish();  // Close the current activity
+        });
+
+        // Set up the search functionality
+        searchVacationInput = findViewById(R.id.search_vacation);
+        buttonSearchVacation = findViewById(R.id.button_search_vacation);
+
+        buttonSearchVacation.setOnClickListener(v -> {
+            String query = searchVacationInput.getText().toString().trim();
+            if (!TextUtils.isEmpty(query)) {
+                filterVacationsByName(query, adapter);
+            } else {
+                // If the query is empty, display the full list
+                vacationViewModel.getAllVacations().observe(this, vacations -> {
+                    vacationViewModel.getAllExcursions().observe(this, excursions -> {
+                        adapter.setVacations(vacations, excursions);
+                    });
+                });
+            }
+        });
+    }
+
+    // Filter the vacation list based on the query and update the adapter
+    private void filterVacationsByName(String query, VacationAdapter adapter) {
+        vacationViewModel.getAllVacations().observe(this, vacations -> {
+            List<Vacation> filteredVacations = vacations.stream()
+                    .filter(vacation -> vacation.getVacationName().toLowerCase().contains(query.toLowerCase()))
+                    .collect(Collectors.toList());
+
+            vacationViewModel.getAllExcursions().observe(this, excursions -> {
+                adapter.setVacations(filteredVacations, excursions);
+            });
         });
     }
 }
