@@ -83,11 +83,20 @@ public class ExcursionActivity extends AppCompatActivity {
     }
 
     private void setOnClickListeners() {
-        // Navigate to ExcursionEditActivity to edit the excursion
+        // Navigate to ExcursionDetails to edit the excursion
         buttonEdit.setOnClickListener(v -> {
-            Intent intentEdit = new Intent(ExcursionActivity.this, ExcursionDetails.class); // Adjusted to use correct activity
+            Intent intentEdit = new Intent(ExcursionActivity.this, ExcursionDetails.class);
+
+            // Pass the vacationId back to ExcursionDetails
+            intentEdit.putExtra("vacation_id", vacationId);
+
+            // You can also pass the selected excursions if needed
+            if (excursions != null && !excursions.isEmpty()) {
+                intentEdit.putParcelableArrayListExtra("selected_excursions", excursions);
+            }
+
             startActivity(intentEdit);
-            finish(); // Close this activity if you want to remove it from the back stack
+            finish();
         });
 
         // Handle excursion deletion
@@ -96,6 +105,7 @@ public class ExcursionActivity extends AppCompatActivity {
         // Save all selected excursions and go back to MainActivity
         buttonSave.setOnClickListener(v -> saveExcursions());
     }
+
 
     // Delete all selected excursions logic
     private void deleteExcursions() {

@@ -120,16 +120,20 @@ public class ExcursionDetails extends AppCompatActivity {
 
         // Confirm button click listener to send selected excursions to ExcursionActivity
         buttonConfirm.setOnClickListener(v -> {
+            Intent intent = new Intent(ExcursionDetails.this, ExcursionActivity.class);
             if (selectedExcursions != null && !selectedExcursions.isEmpty()) {
-                Intent intent = new Intent(ExcursionDetails.this, ExcursionActivity.class);
+                // Pass selected excursions
                 intent.putParcelableArrayListExtra("selected_excursions", selectedExcursions);
-                intent.putExtra("vacation_id", vacationId);
-                startActivity(intent);
-                finish();
             } else {
+                // Pass an empty list if no excursions are selected
+                intent.putParcelableArrayListExtra("selected_excursions", new ArrayList<>());
                 Toast.makeText(this, "No excursions to pass.", Toast.LENGTH_SHORT).show();
             }
+            intent.putExtra("vacation_id", vacationId);
+            startActivity(intent);
+            finish();
         });
+
     }
 
     private void populateExcursionDescriptions() {
