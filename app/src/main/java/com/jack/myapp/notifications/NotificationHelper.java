@@ -8,7 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.myapp.R;
+import com.jack.myapp.R;
 
 import android.os.Build;
 

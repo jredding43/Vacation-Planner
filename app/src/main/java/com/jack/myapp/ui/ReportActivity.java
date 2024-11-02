@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.myapp.R;
+import com.jack.myapp.R;
 import com.jack.myapp.entities.Vacation;
 import com.jack.myapp.viewmodel.VacationViewModel;
 

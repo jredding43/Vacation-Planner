@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
-import com.example.myapp.R;
+import com.jack.myapp.R;
 
 public class AlarmReceiver extends BroadcastReceiver {
     private static final String CHANNEL_ID = "vacation_alerts";

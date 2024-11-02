@@ -14,7 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapp.R;
+import com.jack.myapp.R;
 import com.jack.myapp.database.Repository;
 import com.jack.myapp.entities.Excursion;
 import com.jack.myapp.entities.Vacation;

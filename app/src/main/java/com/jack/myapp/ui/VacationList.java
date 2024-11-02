@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapp.R;
+import com.jack.myapp.R;
 import com.jack.myapp.database.Repository;
 import com.jack.myapp.entities.Vacation;
 import com.jack.myapp.viewmodel.VacationViewModel;

@@ -13,7 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.myapp.R;
+import com.jack.myapp.R;
 import com.jack.myapp.entities.Excursion;
 import com.jack.myapp.viewmodel.VacationViewModel;
 
