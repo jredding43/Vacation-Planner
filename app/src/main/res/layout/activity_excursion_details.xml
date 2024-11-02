@@ -3,20 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/White"
     android:orientation="vertical"
-    android:padding="24dp"
-    android:background="@android:color/white">
+    android:padding="24dp">
 
     <!-- Title TextView -->
     <TextView
         android:id="@+id/textViewExcursionsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:text="Select Excursions"
-        android:textSize="20sp"
-        android:textStyle="bold"
         android:textColor="@android:color/black"
-        android:layout_marginBottom="16dp" />
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <!-- EditText for entering excursion -->
     <EditText
@@ -30,38 +30,39 @@
         android:id="@+id/buttonAddExcursion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Excursion"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
+        android:layout_marginTop="16dp"
         android:backgroundTint="@color/colorPrimary"
-        android:layout_marginTop="16dp" />
+        android:text="Add Excursion"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
 
     <Button
         android:id="@+id/buttonDeleteExcursion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Delete Excursion"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
+        android:layout_marginTop="16dp"
         android:backgroundTint="@color/colorPrimary"
-        android:layout_marginTop="16dp" />
+        android:text="Delete Excursion"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
 
     <!-- ListView for displaying selected excursions -->
     <ListView
         android:id="@+id/listViewSelectedExcursions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:choiceMode="singleChoice"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:background="#6B6B6B"
+        android:choiceMode="singleChoice" />
 
     <!-- Confirm Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonConfirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Confirm Excursions"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
+        android:layout_marginTop="16dp"
         android:backgroundTint="@color/colorPrimary"
-        android:layout_marginTop="16dp" />
+        android:text="Confirm Excursions"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
 </LinearLayout>
