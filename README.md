@@ -30,3 +30,4 @@ The **Vacation-Planner** is an Android mobile application designed to help users
 1. Clone the repository:
    ```bash
    git clone https://github.com/jredding43/Vacation-Planner.git
+use the .apk file to test in VM
