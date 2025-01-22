@@ -17,14 +17,15 @@
         android:theme="@style/Theme.JackD424"
         tools:targetApi="31">
 
-        <activity
-            android:name=".ui.LoginActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+<!-- REMOVE FOR GITHUB PURPOSES-->
+<!--        <activity-->
+<!--            android:name=".ui.LoginActivity"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
 
         <activity
             android:name=".ui.ReportActivity"
@@ -46,7 +47,12 @@
             android:exported="false" />
         <activity
             android:name=".ui.MainActivity"
-            android:exported="true" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
     </application>
 
